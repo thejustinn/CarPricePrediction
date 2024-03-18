@@ -15,8 +15,8 @@ from sklearn.ensemble import RandomForestRegressor
 import warnings
 warnings.filterwarnings("ignore")
 
-# Data Preprocessing Steps
-def preprocess_data(df):
+# Data Preprocessing and Cleaning Steps
+def preprocess_and_clean_data(df):
     # Log transform certain columns
     df["MILEAGE_KM"] = df['MILEAGE_KM'].apply(np.log)
     df["DEPRE_VALUE_PER_YEAR"] = df['DEPRE_VALUE_PER_YEAR'].apply(np.log)
@@ -35,9 +35,6 @@ def preprocess_data(df):
 # Load data
 df_clean_log = pd.read_csv('clean_log_data.csv')
 
-# Preprocess data
-df_clean_log = preprocess_data(df_clean_log)
-
 # Split features and target
 X = df_clean_log.drop('PRICE', axis=1)
 y = df_clean_log['PRICE']
@@ -47,6 +44,7 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 
 # Define pipeline steps
 steps = [
+    ('cleaning', FunctionTransformer(func=preprocess_and_clean_data)),  # Preprocessing and cleaning
     ('scaler', StandardScaler()),  # Standardize features
     ('regressor', RandomForestRegressor())  # RandomForestRegressor as the model
 ]
