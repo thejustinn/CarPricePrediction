@@ -1,39 +1,16 @@
 import pandas as pd
 import numpy as np
-import scipy.signal.signaltools
-import statsmodels.api as sm
-import matplotlib.pyplot as plt
-import seaborn as sns
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
-from sklearn.linear_model import LinearRegression
-from sklearn.metrics import mean_squared_error, r2_score
 from sklearn.ensemble import RandomForestRegressor
+from sklearn.metrics import mean_squared_error, r2_score
 
-# Suppress warnings
-import warnings
-warnings.filterwarnings("ignore")
-
-# Data Preprocessing and Cleaning Steps
-def preprocess_and_clean_data(df):
-    # Log transform certain columns
-    df["MILEAGE_KM"] = df['MILEAGE_KM'].apply(np.log)
-    df["DEPRE_VALUE_PER_YEAR"] = df['DEPRE_VALUE_PER_YEAR'].apply(np.log)
-    df["ROAD_TAX_PER_YEAR"] = df['ROAD_TAX_PER_YEAR'].apply(np.log)
-    df["DEREG_VALUE_FROM_SCRAPE_DATE"] = df['DEREG_VALUE_FROM_SCRAPE_DATE'].apply(np.log)
-    df["OMV"] = df['OMV'].apply(np.log)
-    df["COE_FROM_SCRAPE_DATE"] = df['COE_FROM_SCRAPE_DATE'].apply(np.log)
-    df["ENGINE_CAPACITY_CC"] = df['ENGINE_CAPACITY_CC'].apply(np.log)
-    df["CURB_WEIGHT_KG"] = df['CURB_WEIGHT_KG'].apply(np.log)
-
-    # Drop unnecessary columns
-    df.drop(['ARF', 'ROAD_TAX_PER_YEAR', 'REG_DATE', 'MANUFACTURED_YEAR', 'VEHICLE_TYPE', 'POST_DATE', 'CAR_CATEGORY', 'BRAND'], axis=1, inplace=True)
-    
-    return df
+# Load data (assuming the CSV file is in the same directory as this script)
+csv__file__path = 'clean_log_data.csv'
 
 # Load data
-df_clean_log = pd.read_csv('clean_log_data.csv')
+df_clean_log = pd.read_csv(csv__file__path)
 
 # Split features and target
 X = df_clean_log.drop('PRICE', axis=1)
@@ -44,7 +21,6 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 
 # Define pipeline steps
 steps = [
-    ('cleaning', FunctionTransformer(func=preprocess_and_clean_data)),  # Preprocessing and cleaning
     ('scaler', StandardScaler()),  # Standardize features
     ('regressor', RandomForestRegressor())  # RandomForestRegressor as the model
 ]
