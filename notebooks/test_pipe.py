@@ -2,32 +2,24 @@ import pandas as pd
 from sklearn.preprocessing import StandardScaler
 import numpy as np
 from sklearn.ensemble import ExtraTreesRegressor
-from sklearn.linear_model import LinearRegression, Lasso, LassoCV, Ridge, RidgeCV, ElasticNet, ElasticNetCV
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import r2_score
+import warnings
 class DataPipeLine :
 
     def __init__(self, data_source):
         self.data_path = data_source
         self.data = None
-        self.scaled_data = None
-<<<<<<< Updated upstream
         self.regressor_data = None
-=======
->>>>>>> Stashed changes
+    
 
     def load_data(self):
         self.data = pd.read_csv(self.data_path)
 
     def clean_data(self):
-<<<<<<< Updated upstream
-        data_clean = self.data.drop(['LISTING_URL', 'SCRAPE_DATE'],axis=1)
-        data_clean.dropna()
-        data_clean['SCRAPE_DATE'] = pd.to_datetime(self.data['SCRAPE_DATE'])
-        df_clean['MANUFACTURED_YEAR'] = df_clean['MANUFACTURED_YEAR'].astype(int)
-
-=======
+        warnings.filterwarnings("ignore")
         df_clean = self.data.drop(['LISTING_URL', 'SCRAPE_DATE'],axis=1)
         dropped_data=df_clean.dropna()
->>>>>>> Stashed changes
         df_clean=dropped_data
         
         self.data['SCRAPE_DATE'] = pd.to_datetime(self.data['SCRAPE_DATE'])
@@ -38,8 +30,6 @@ class DataPipeLine :
         df_clean['POST_AGE'] = (self.data['SCRAPE_DATE'] - df_clean['POST_DATE'])
         df_clean['POST_AGE']=df_clean['POST_AGE'].dt.days
 
-<<<<<<< Updated upstream
-=======
         df_clean['TRANSMISSION_CONVERT'] = df_clean['TRANSMISSION'].apply(lambda x: 1 if x == 'Auto' else 0)
         df_clean.drop('TRANSMISSION',axis=1,inplace=True)
         df_clean.rename(columns={'TRANSMISSION_CONVERT':"TRANSMISSION"}, inplace=True) 
@@ -108,27 +98,32 @@ class DataPipeLine :
         df_clean_log.drop('POST_DATE', axis=1, inplace=True)
         df_clean_log.drop('CAR_CATEGORY', axis=1, inplace=True)
         df_clean_log.drop(columns=df_clean_log.columns[0], axis=1,  inplace=True)
-        return df_clean_log
+        self.data= df_clean_log
         
 
-
->>>>>>> Stashed changes
-    def scale_data(self):
-        scaler = StandardScaler()
-        self.scaled_data = scaler.fit_transform(self.data)
-
     def regression(self):
-        regressor = ExtraTreesRegressor(n_estimators=400)
-        self.regressor = regressor.fit(self.data)
+        warnings.filterwarnings("ignore")
+        x_var=self.data.drop('PRICE', axis=1)
+        y= self.data['PRICE']
 
-    def run_pipeline(self, n_components):
+        test_size = 0.20
+        seed = 7
+
+        X_train, X_test, y_train, y_test = train_test_split(x_var, y, test_size=test_size, random_state=seed)
+        
+        scaler = StandardScaler().fit(X_train)
+        rescaledX = scaler.transform(X_train)
+        model = ExtraTreesRegressor(n_estimators=400)
+        model.fit(rescaledX, y_train)
+        # transform the validation dataset
+        rescaledValidationX = scaler.transform(X_test)
+        predictions = model.predict(rescaledValidationX)
+        self.regressor_data=round(r2_score(y_test,predictions), 3)
+
+    def run_pipeline(self):
         self.load_data()
         self.clean_data()
-        self.scale_data()
-<<<<<<< Updated upstream
         self.regression()
-        self.perform_pca(n_components)
-=======
-       
->>>>>>> Stashed changes
+        return self.regressor_data
+      
 
