@@ -1,6 +1,7 @@
 import pandas as pd
 from sklearn.preprocessing import StandardScaler
 import numpy as np
+from sklearn.ensemble import ExtraTreesRegressor
 from sklearn.linear_model import LinearRegression, Lasso, LassoCV, Ridge, RidgeCV, ElasticNet, ElasticNetCV
 
 
@@ -10,6 +11,7 @@ class DataPipeLine :
         self.data_path = data_source
         self.data = None
         self.scaled_data = None
+        self.regressor.data = None
         self.number = 0.4
 
     def load_data(self):
@@ -29,12 +31,13 @@ class DataPipeLine :
         df_clean['CAR_AGE'] = df_main['SCRAPE_DATE'].dt.year  - df_clean['MANUFACTURED_YEAR'] # Obtaining values for age of car
 
 
-
-
-
     def scale_data(self):
         scaler = StandardScaler()
         self.scaled_data = scaler.fit_transform(self.data)
+
+    def regression(self):
+        regressor = ExtraTreesRegressor(n_estimators=400)
+        self.regressor = regressor.fit(self.data)
 
     def run_pipeline(self, n_components):
         self.load_data()
