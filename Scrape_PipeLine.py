@@ -15,7 +15,7 @@ class Scrape_PipeLine:
                                          'SCRAPE_DATE', 'OMV', 'ARF', 'COE_FROM_SCRAPE_DATE',
                                          'DAYS_OF_COE_LEFT', 'ENGINE_CAPACITY_CC', 'CURB_WEIGHT_KG',
                                          'NO_OF_OWNERS', 'VEHICLE_TYPE', 'POST_DATE'])
-        self.filename = 'sgcarmart_used_cars_prices7'
+        self.filename = 'sgcarmart_used_cars_prices_pipeline'
         self.base_url = 'https://www.sgcarmart.com/used_cars/'
 
     def fetch_main_pages(self):
