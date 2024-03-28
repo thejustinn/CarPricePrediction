@@ -25,7 +25,9 @@ class Scrape_PipeLine:
     def fetch_listing_url(self, main_page_url):
         content = requests.get(main_page_url)
         soup = BeautifulSoup(content.text, 'lxml')
+        print(soup)
         links = soup.find_all('a')
+        print(links)
         for link in links:
             suffix = link.get('href')
             if ('ID=' in suffix) and ('DL=' in suffix):
