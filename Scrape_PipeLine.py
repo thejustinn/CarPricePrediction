@@ -27,9 +27,7 @@ class Scrape_PipeLine:
     def fetch_listing_url(self, main_page_url):
         content = requests.get(main_page_url, headers=headers)
         soup = BeautifulSoup(content.text, 'lxml')
-        print(soup)
         links = soup.find_all('a')
-        print(links)
         for link in links:
             suffix = link.get('href')
             if ('ID=' in suffix) and ('DL=' in suffix):
@@ -143,23 +141,9 @@ class Scrape_PipeLine:
         
         return data
 
-    # def run_pipeline(self):
-        # main_page_url = self.fetch_main_page()
-        # listing_url = self.fetch_listing_url(main_page_url)
-        # if listing_url:
-        #     data = self.fetch_data(listing_url)
-        #     self.df = self.df.append(data, ignore_index=True)
-        #     self.df.to_csv("{}.csv".format(self.filename))
-        #     return self.df
-        # else:
-        #     print("No valid listing URL found.")
-        #     return None
-
     def run_pipeline(self):
         main_page_url = self.fetch_main_page()
-        print(main_page_url)
         listing_url = self.fetch_listing_url(main_page_url)
-        print(listing_url)
         if listing_url:
             data = self.fetch_data(listing_url)
             self.df = self.df._append(data, ignore_index=True)
