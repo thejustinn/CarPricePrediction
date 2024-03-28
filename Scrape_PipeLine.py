@@ -140,12 +140,24 @@ class Scrape_PipeLine:
         
         return data
 
+    # def run_pipeline(self):
+        # main_page_url = self.fetch_main_page()
+        # listing_url = self.fetch_listing_url(main_page_url)
+        # if listing_url:
+        #     data = self.fetch_data(listing_url)
+        #     self.df = self.df.append(data, ignore_index=True)
+        #     self.df.to_csv("{}.csv".format(self.filename))
+        #     return self.df
+        # else:
+        #     print("No valid listing URL found.")
+        #     return None
+
     def run_pipeline(self):
         main_page_url = self.fetch_main_page()
         listing_url = self.fetch_listing_url(main_page_url)
         if listing_url:
             data = self.fetch_data(listing_url)
-            self.df = self.df.append(data, ignore_index=True)
+            self.df = self.df._append(data, ignore_index=True)
             self.df.to_csv("{}.csv".format(self.filename))
             return self.df
         else:
