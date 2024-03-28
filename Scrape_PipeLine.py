@@ -7,10 +7,7 @@ from datetime import datetime
 
 from sgcarmart_webscraper_functions import *  # Imports all defined webscraping functions
 
-headers = requests.utils.default_headers()
-headers.update({
-    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
-})
+headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36'}
 
 class Scrape_PipeLine:
     def __init__(self):
@@ -28,7 +25,7 @@ class Scrape_PipeLine:
         return url
 
     def fetch_listing_url(self, main_page_url):
-        content = requests.get(main_page_url)
+        content = requests.get(main_page_url, headers=headers)
         soup = BeautifulSoup(content.text, 'lxml')
         print(soup)
         links = soup.find_all('a')
