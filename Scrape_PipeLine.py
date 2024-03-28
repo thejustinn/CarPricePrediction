@@ -153,6 +153,7 @@ class Scrape_PipeLine:
 
     def run_pipeline(self):
         main_page_url = self.fetch_main_page()
+        print(main_page_url)
         listing_url = self.fetch_listing_url(main_page_url)
         print(listing_url)
         if listing_url:
