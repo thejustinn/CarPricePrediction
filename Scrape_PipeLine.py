@@ -18,26 +18,20 @@ class Scrape_PipeLine:
         self.filename = 'sgcarmart_used_cars_prices7'
         self.base_url = 'https://www.sgcarmart.com/used_cars/'
 
-    def fetch_main_pages(self):
-        main_page_listing_list = []
-        for idx in range(166):
-            url = "https://www.sgcarmart.com/used_cars/listing.php?BRSR=" + str(idx * 100) + "&RPG=100&AVL=2&VEH=2"
-            main_page_listing_list.append(url)
-        return main_page_listing_list
+    def fetch_main_page(self):
+        url = "https://www.sgcarmart.com/used_cars/listing.php?BRSR=0&RPG=100&AVL=2&VEH=2" 
+        return url
 
-    def fetch_listing_urls(self, main_page_listing_list):
-        listing_urls = []
-        for main_link in main_page_listing_list:
-            content = requests.get(main_link)
-            soup = BeautifulSoup(content.text, 'lxml')
-            links = soup.find_all('a')
-            for link in links:
-                suffix = link.get('href')
-                if ('ID=' in suffix) and ('DL=' in suffix):
-                    listing_url = self.base_url + suffix
-                    listing_urls.append(listing_url)
-            time.sleep(1)
-        return list(set(listing_urls))
+    def fetch_listing_url(self, main_page_url):
+        content = requests.get(main_page_url)
+        soup = BeautifulSoup(content.text, 'lxml')
+        links = soup.find_all('a')
+        for link in links:
+            suffix = link.get('href')
+            if ('ID=' in suffix) and ('DL=' in suffix):
+                listing_url = self.base_url + suffix
+                return listing_url  
+        return None
 
     def brand_retrieval(self, parsed_url):
         try:
@@ -55,19 +49,108 @@ class Scrape_PipeLine:
             data['BRAND'] = self.brand_retrieval(listing_url)
         except:
             data['BRAND'] = np.nan
-        # Add other data retrieval logic here
+        try:
+            data['PRICE'] = price_retrieval(listing_url)
+        except:
+            data['PRICE']=np.nan
+            
+        try:
+            data['DEPRE_VALUE_PER_YEAR'] = depreciation_value_per_year_retrieval(listing_url)
+        except:
+            data['DEPRE_VALUE_PER_YEAR'] = np.nan
+            
+        try:
+            data['REG_DATE'] = registered_date_retrieval(listing_url)
+        except:
+            data['REG_DATE'] = np.nan
+        
+        try:
+            data['MILEAGE_KM'] = mileage_retrieval(listing_url)
+        except:
+            data['MILEAGE_KM'] = np.nan
+
+        try:
+            data['MANUFACTURED_YEAR'] = manufactured_year_retrieval(listing_url)
+        except: 
+            data['MANUFACTURED_YEAR'] = np.nan
+        
+        try:
+            data['ROAD_TAX_PER_YEAR'] = road_tax_retrieval(listing_url)
+        except:
+            data['ROAD_TAX_PER_YEAR'] = np.nan
+            
+        try:
+            data['TRANSMISSION'] = transmission_retrieval(listing_url)
+        except:
+            data['TRANSMISSION'] = np.nan
+
+            
+        try:
+            data['DEREG_VALUE_FROM_SCRAPE_DATE'] = dereg_value_retrieval(listing_url)
+        except: 
+            data['DEREG_VALUE_FROM_SCRAPE_DATE'] = np.nan
+            
+        data['SCRAPE_DATE'] = datetime.now().strftime("%d/%m/%Y")
+        
+        try:
+            data['OMV'] = omv_retrieval(listing_url)
+        except: 
+            data['OMV'] = np.nan
+
+        try:
+            data['ARF'] = arf_retrieval(listing_url)
+        except: 
+            data['ARF'] = np.nan
+            
+        try:
+            data['COE_FROM_SCRAPE_DATE'] = coe_retrieval(listing_url)
+        except:
+            data['COE_FROM_SCRAPE_DATE'] = np.nan
+            
+        try:
+            data['DAYS_OF_COE_LEFT'] = days_of_coe_retrieval(listing_url)
+        except:
+            data['DAYS_OF_COE_LEFT'] = np.nan
+            
+        try:
+            data['ENGINE_CAPACITY_CC'] = engine_capacity_retrieval(listing_url)
+        except: 
+            data['ENGINE_CAPACITY_CC'] = np.nan
+            
+        try:
+            data['CURB_WEIGHT_KG'] = curb_weight_retrieval(listing_url)
+        except:
+            data['CURB_WEIGHT_KG'] = np.nan
+            
+        try:
+            data['NO_OF_OWNERS'] = number_of_owners_retrieval(listing_url)
+        except:
+            data['NO_OF_OWNERS'] = np.nan
+            
+        try:
+            data['VEHICLE_TYPE'] = type_of_vehicle_retrieval(listing_url)
+        except:
+            data['VEHICLE_TYPE'] = np.nan
+            
+        try:
+            data['POST_DATE'] = postdate_retrieval(listing_url)
+        
+        except:
+            data['POST_DATE'] = np.nan
+        
         return data
 
     def run_pipeline(self):
-        main_page_listing_list = self.fetch_main_pages()
-        listing_urls = self.fetch_listing_urls(main_page_listing_list)
-        for idx, listing_url in enumerate(listing_urls):
+        main_page_url = self.fetch_main_page()
+        listing_url = self.fetch_listing_url(main_page_url)
+        if listing_url:
             data = self.fetch_data(listing_url)
             self.df = self.df.append(data, ignore_index=True)
             self.df.to_csv("{}.csv".format(self.filename))
-            print(idx)
-            time.sleep(1)
-        return self.df
+            return self.df
+        else:
+            print("No valid listing URL found.")
+            return None
 
 pipeline = Scrape_PipeLine()
 pipeline.run_pipeline()
