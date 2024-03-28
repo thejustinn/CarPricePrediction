@@ -45,7 +45,7 @@ class Scrape_PipeLine:
         response = requests.get(listing_url)
         listing_url_original = listing_url
         listing_url = BeautifulSoup(response.text, 'lxml')
-
+        print(listing_url)
         data = {}
         data['LISTING_URL'] = listing_url_original
         data['SCRAPE_DATE'] = datetime.now().strftime("%d/%m/%Y")
