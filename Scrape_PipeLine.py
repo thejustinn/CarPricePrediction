@@ -7,6 +7,11 @@ from datetime import datetime
 
 from sgcarmart_webscraper_functions import *  # Imports all defined webscraping functions
 
+headers = requests.utils.default_headers()
+headers.update({
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
+})
+
 class Scrape_PipeLine:
     def __init__(self):
         self.df = pd.DataFrame(columns=['LISTING_URL', 'BRAND', 'PRICE', 'DEPRE_VALUE_PER_YEAR',
