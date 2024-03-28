@@ -7,7 +7,16 @@ from datetime import datetime
 
 from sgcarmart_webscraper_functions import *  # Imports all defined webscraping functions
 
-headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36'}
+headers = {
+    'Host': '127.0.0.1:65432',
+    'Connection': 'keep-alive',
+    'Cache-Control': 'max-age=0',
+    'sec-ch-ua': "\" Not A;Brand\";v=\"123\", \"Chromium\";v=\"123\", \"Google Chrome\";v=\"123\"",
+    'sec-ch-ua-mobile': '?0',
+    'sec-ch-ua-platform': "macOS",
+    'Upgrade-Insecure-Requests': 1,
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
+    }
 
 class Scrape_PipeLine:
     def __init__(self):
