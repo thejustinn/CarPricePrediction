@@ -16,7 +16,7 @@ class Scrape_PipeLine:
                                          'DAYS_OF_COE_LEFT', 'ENGINE_CAPACITY_CC', 'CURB_WEIGHT_KG',
                                          'NO_OF_OWNERS', 'VEHICLE_TYPE', 'POST_DATE'])
         self.filename = 'sgcarmart_used_cars_prices_pipeline'
-        self.base_url = 'https://www.sgcarmart.com/used_cars/'
+        self.base_url = "https://www.sgcarmart.com/used_cars/"
 
     def fetch_main_page(self):
         url = "https://www.sgcarmart.com/used_cars/listing.php?BRSR=0&RPG=100&AVL=2&VEH=2" 
@@ -154,6 +154,7 @@ class Scrape_PipeLine:
     def run_pipeline(self):
         main_page_url = self.fetch_main_page()
         listing_url = self.fetch_listing_url(main_page_url)
+        print(listing_url)
         if listing_url:
             data = self.fetch_data(listing_url)
             self.df = self.df._append(data, ignore_index=True)
