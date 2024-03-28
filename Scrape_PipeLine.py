@@ -8,13 +8,9 @@ from datetime import datetime
 from sgcarmart_webscraper_functions import *  # Imports all defined webscraping functions
 
 headers = {
-    'Host': '127.0.0.1:65432',
-    'Connection': 'keep-alive',
-    'Cache-Control': 'max-age=0',
     'sec-ch-ua': "\" Not A;Brand\";v=\"123\", \"Chromium\";v=\"123\", \"Google Chrome\";v=\"123\"",
     'sec-ch-ua-mobile': '?0',
-    'sec-ch-ua-platform': "macOS",
-    'Upgrade-Insecure-Requests': '1',
+    'sec-ch-ua-platform': "Windows",
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
     }
 
@@ -35,6 +31,7 @@ class Scrape_PipeLine:
 
     def fetch_listing_url(self, main_page_url):
         content = requests.get(main_page_url, headers=headers)
+        print(content)
         soup = BeautifulSoup(content.text, 'lxml')
         links = soup.find_all('a')
         for link in links:
@@ -51,10 +48,9 @@ class Scrape_PipeLine:
             return np.nan
 
     def fetch_data(self, listing_url):
-        response = requests.get(listing_url)
+        response = requests.get(listing_url, headers=headers)
         listing_url_original = listing_url
         listing_url = BeautifulSoup(response.text, 'lxml')
-        print(listing_url)
         data = {}
         data['LISTING_URL'] = listing_url_original
         data['SCRAPE_DATE'] = datetime.now().strftime("%d/%m/%Y")
@@ -155,15 +151,17 @@ class Scrape_PipeLine:
 
     def run_pipeline(self):
         main_page_url = self.fetch_main_page()
+        print(main_page_url)
         listing_url = self.fetch_listing_url(main_page_url)
-        if listing_url:
-            data = self.fetch_data(listing_url)
-            self.df = self.df._append(data, ignore_index=True)
-            self.df.to_csv("{}.csv".format(self.filename))
-            return self.df
-        else:
-            print("No valid listing URL found.")
-            return None
+        print(listing_url)
+        # if listing_url:
+        data = self.fetch_data(listing_url)
+        self.df = self.df._append(data, ignore_index=True)
+        self.df.to_csv("{}.csv".format(self.filename))
+        return self.df
+        # else:
+        #     print("No valid listing URL found.")
+        #     return None
 
 pipeline = Scrape_PipeLine()
 pipeline.run_pipeline()
