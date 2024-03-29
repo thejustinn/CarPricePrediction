@@ -154,9 +154,9 @@ class Scrape_PipeLine:
         return data
 
     def run_pipeline(self):
-        main_page_url = self.fetch_main_page()
+        main_page_url = self.fetch_main_pages()
         print(main_page_url)
-        listing_url = self.fetch_listing_url(main_page_url)
+        listing_url = self.fetch_listing_urls(main_page_url)
         if listing_url:
             data = self.fetch_data(listing_url)
             self.df = self.df._append(data, ignore_index=True)
